@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nav-contact</title>
+</head>
+<body>
+    <label for="email">Votre Email</label><br>
+    <input type="email" name="email" id="email"><br>
+    <label for="message">Votre Message</label><br>
+    <textarea name="message" id="message" cols="30" rows="10"></textarea><br>
+    <input type="submit" id="envoie" value="Envoyer">
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+// document.getElementById("envoie").addEventListener('click',()=> {//或者用jquery替代  $("#envoie").click(function()
+//     var textmail = document.getElementById("email").value; //如果在click外面的话，console.log无法get到信息，因为每次刷新页面，email的填充项都会清零，所以永远都无法得到值
+//     console.log(textmail);
+//     var textmessage = document.getElementById("message").value;
+//     console.log(textmessage);
+
+//     fetch('https://slack.com/api/chat.postMessage',{
+//         method: 'POST', 
+//         headers: new Headers({
+//             'Content-Type': 'application/json',
+//             'Authorization': 'Bearer xoxb-1639577899874-1636558651621-PBmbAoqQwtTpdgkSw75xJHvG',
+//         }),
+//         body: JSON.stringify({channel:"C01KHCEUA7J", text:`Email: ${textmail}\n Message: ${textmessage}`}), // data can be `string` or {object}!
+//   })
+// //   fetch('url')  // 从其他网站上面获取信息。。。上面的method：post是send信息给其他网站，所以有headers里面的对信息发送配置的格式
+// //   .then(response => response.json())
+// //   .then(jsn => {console.log("success: ", jsn)})
+// //   .catch (err => {console.log("erreur: ", err )})
+// });
+
+
+if(!localStorage.getItem('token')){//用if检测，如果没有token，则去执行fetch，如果有就什么都不做。
+    console.log('hello');//先用log检查一下，如果他查到有token，就不会出现hello
+fetch('https://sitetingkc.herokuapp.com')
+.then(response => response.json())
+.then(data =>{
+    console.log(data.token);
+    localStorage.setItem('token',data.token);// 把token存在local
+}
+)//如果token有存在机器上，那就去lacalStorage找token，如果没有，就去fetch里面的而我刚创建的api里面找
+}
+
+document.getElementById("envoie").addEventListener('click',()=>{
+    var textMail =document.getElementById('email').value;
+    var textMessage =document.getElementById("message").value;
+   console.log(textMessage);
+
+
+   fetch('https://slack.com/api/chat.postMessage',{
+       method: 'POST',
+       headers: new Headers({
+           'Content-Type': 'application/json',
+           'Authorization': `Bearer ${localStorage.getItem('token')}`,
+       }),
+       body: JSON.stringify({channel:"C01KYBX5CLE",text:`Email: ${textMail}\n Message: ${textMessage}`})
+   });
+})
+
+
+</script>
+</body>
+</html>
